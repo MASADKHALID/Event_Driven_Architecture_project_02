@@ -1,4 +1,4 @@
-# **Event_Driven_Architecture_project_02**
+# **Event_Driven_Architecture**
 Event-driven architecture involves designing software systems where events trigger actions or workflows. In this setup, AWS S3, SQS, and Lambda work together to create an efficient and scalable event-driven solution.
 
 # **S3 (Simple Storage Service):** 
@@ -9,6 +9,11 @@ Event-driven architecture involves designing software systems where events trigg
 
 # **Lambda**: 
   AWS Lambda functions are triggered by the messages in the SQS queue. The Lambda function processes the event, performing actions such as data processing, transformation, or invoking other services.
+
+# Event driven Architecture:
+
+![eventdrivenarchitectureproject2 drawio](https://github.com/user-attachments/assets/286360ac-55e4-4227-9573-a758582b429d)
+
 
 Overall, this architecture ensures scalability and resilience by using S3 for storage, SQS for reliable message queuing, and Lambda for serverless, on-demand processing of events.
 
