@@ -13,10 +13,15 @@ Lambda functions are triggered by messages in the SQS queue. These functions pro
 
 # **🔗 How It Works:**
 Raw Data Upload: Data is uploaded to an S3 bucket.
+
 Event Trigger: The upload triggers an event.
+
 Message Queuing: The event is sent to an SQS queue.
+
 Serverless Processing: Lambda functions process the data from the queue.
+
 Output Storage: The processed data is stored back in an S3 bucket.
+
 This architecture ensures scalability, resilience, and efficiency by utilizing serverless technologies and decoupling system components. It's a game-changer for handling large-scale data processing tasks!
 ![eventdrivenarchitectureproject2 drawio](https://github.com/user-attachments/assets/98b33ff5-65fa-4e00-9854-722b747f24a7)
 
