@@ -1,0 +1,23 @@
+event driven architeture
+1)creete simple quue
+  edit queue
+  policy generate
+  arn * ==>all action==>previous arn policy copy==>bucket arn(properties)==>key:sourcearn,value:se arn
+  generate
+  paste in edit policy==>save
+2)create bucket
+  create eventnotification
+  in s3==>propertiess==>create event notification==>input/==>.csv==>all_abject==>sqs==>choose
+  one message in sqs==>testing==>send and recieve==>poll==>click
+3)create lambda function
+  in configuration ==>permission==>s3$sqsfullacces
+  add triger
+4)upload data ==> s3==>input 
+5)check cloud log notificatiion
+6)check s3==>output folder
+
+
+
+
+
+
