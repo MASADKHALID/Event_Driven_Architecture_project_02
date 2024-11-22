@@ -12,7 +12,8 @@ Event-driven architecture involves designing software systems where events trigg
 
 # Event driven Architecture:
 
-![eventdrivenarchitectureproject2 drawio](https://github.com/user-attachments/assets/286360ac-55e4-4227-9573-a758582b429d)
+![eventdrivenarchitectureproject2 drawio](https://github.com/user-attachments/assets/18fd08b8-d4b4-46ff-a903-9a17e816d9a3)
+
 
 
 Overall, this architecture ensures scalability and resilience by using S3 for storage, SQS for reliable message queuing, and Lambda for serverless, on-demand processing of events.
