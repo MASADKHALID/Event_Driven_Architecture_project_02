@@ -8,64 +8,63 @@ from datetime import datetime
 s3_client = boto3.client('s3')
 
 def lambda_handler(event, context):
+    print(event)
     # Extract the bucket name and file key from the event
-    print(event['Records'])
-    for i in event['Records']:
-        s3_event = json.loads(i['body'])
-        bucket_name = s3_event['Records'][0]['s3']['bucket']['name']
-        input_file_key = s3_event['Records'][0]['s3']['object']['key']
-        print(f"bucket name=={bucket_name}")
-        print(f"object name=={input_file_key}")
-        # Ensure we are only processing files from the 'input/' folder
-        if input_file_key.startswith('input/'):
-            try:
+    sqs_message = event['Records'][0]['body']
+    sqs_body = json.loads(sqs_message)
+    
+    bucket_name = sqs_body['Records'][0]['s3']['bucket']['name']
+    input_file_key = sqs_body['Records'][0]['s3']['object']['key']
+    print(bucket_name,input_file_key)
+    # Ensure we are only processing files from the 'input/' folder
+    if input_file_key.startswith('input/'):
+        try:
 
-                response = s3_client.get_object(Bucket=bucket_name, Key=input_file_key)
-                file_content = response['Body'].read().decode('utf-8')
-                
-                csv_file = StringIO(file_content)
-                reader = csv.DictReader(csv_file)
-                fieldnames = reader.fieldnames +['close_pct_change'] + ['created_at']
+            response = s3_client.get_object(Bucket=bucket_name, Key=input_file_key)
+            file_content = response['Body'].read().decode('utf-8')
+            
+            csv_file = StringIO(file_content)
+            reader = csv.DictReader(csv_file)
+            fieldnames = reader.fieldnames +['close_pct_change'] + ['created_at']
 
-                output_csv = StringIO()
-                writer = csv.DictWriter(output_csv, fieldnames=fieldnames)
-                writer.writeheader()
-                
-                for row in reader:
+            output_csv = StringIO()
+            writer = csv.DictWriter(output_csv, fieldnames=fieldnames)
+            writer.writeheader()
+            
+            for row in reader:
 
-                    row['date'] = transform_date(row['date'])
-                    
-                    row['volume'] = adjust_volume(row['volume'])
-                    
-                    if float(row['low']) == 0:
-                        row['low'] = str((float(row['open']) + float(row['close'])) / 2)
-                    
-                    row['close_pct_change'] = recalculate_pct_change(row['open'], row['close'])
-                    
-                    row['created_at'] = datetime.now()
-                    
-                    writer.writerow(row)
+                row['date'] = transform_date(row['date'])
+                
+                row['volume'] = adjust_volume(row['volume'])
+                
+                if float(row['low']) == 0:
+                    row['low'] = str((float(row['open']) + float(row['close'])) / 2)
+                
+                row['close_pct_change'] = recalculate_pct_change(row['open'], row['close'])
+                
+                row['created_at'] = datetime.now()
+                
+                writer.writerow(row)
 
-                # Create the output file key
-                output_file_key = input_file_key.replace('input/', 'output/')
-                
-                s3_client.put_object(
-                    Bucket=bucket_name,
-                    Key=output_file_key,
-                    Body=output_csv.getvalue()  
-                )
-                print("sucessfull load to output folder",output_file_key)
-                
-                return {
-                    'statusCode': 200,
-                    'body': json.dumps(f'File processed and uploaded to {output_file_key}')
-                }
-            except Exception as e:
-                print(f"Error processing file: {e}")
-                return {
-                    'statusCode': 500,
-                    'body': json.dumps(f"Error: {str(e)}")
-                }
+            # Create the output file key
+            output_file_key = input_file_key.replace('input/', 'output/')
+            
+            s3_client.put_object(
+                Bucket=bucket_name,
+                Key=output_file_key,
+                Body=output_csv.getvalue()  
+            )
+            
+            return {
+                'statusCode': 200,
+                'body': json.dumps(f'File processed and uploaded to {output_file_key}')
+            }
+        except Exception as e:
+            print(f"Error processing file: {e}")
+            return {
+                'statusCode': 500,
+                'body': json.dumps(f"Error: {str(e)}")
+            }
 
 
 def transform_date(date_str):
